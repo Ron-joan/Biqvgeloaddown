@@ -11,6 +11,7 @@ def getHTMLText(url):
         r.encoding = "utf-8"
         return r.text
     except:
+        time.sleep(1)
         return getHTMLText(url)
 
 def getonepage(page_url,path):
@@ -28,7 +29,7 @@ def getonepage(page_url,path):
                 break
         except:
             continue
-    #time.sleep(1.2)
+    time.sleep(1.2)
     f.close()
     return ""
 
@@ -41,14 +42,23 @@ def getallpage(catalogue_url,path):
     for pages in soup.find_all('dd'):
         all = len(soup.find_all('dd'))
         for page in pages.children:
-            page_url = catalogue_url[:-10] + page.attrs['href']
+            page_url = catalogue_url + page.attrs['href'][-12:]
             getonepage(page_url,path)
-            print('当前进度为{:.2f}%'.format(count*100/all))
+            print('{}当前进度为{:.2f}%'.format(title.string,count*100/all))
             count = count + 1
     return ""
 
 def main():
-    start_url = 'http://www.xbiquge.la/29/29911/'
-    path = 'D:/novel/'
-    getallpage(start_url,path)
+    Cataloguepath = 'D:/novel/下载目录.txt'
+    f = open(Cataloguepath, 'r', encoding="utf-8")
+    l = []
+    for line in f.readlines():
+        if line[-1] == '\n':
+            l.append(line[:-1])
+        else:
+            l.append(line)
+    for i in l:
+        start_url = i
+        path = 'D:/novel/'
+        getallpage(start_url, path)
 main()
